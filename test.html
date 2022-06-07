@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="style.css">
+</head>
+<body>
+	<div class="panel">
+        <!-- 1. Intro panel -->
+		<div id="intro-panel">
+            <h1>Quiz Instructions.</h1>
+            <h2>1. Quiz consists of 6 question, and you need to answer all of them.</h2>
+            <h2>2. You can move forward using Next button.</h2>
+            <h2>3. There is no backward move once you hit next.</h2>
+            <h2>4. Submit your answers after completing 6th question.</h2>
+            <br>
+            <br>
+            <div>
+                <span style="font-size: 25px; font-weight: bold;">Name:</span>
+                 <input class="name" type="text">
+            </div>
+		</div>
+        <!-- 2. Quiz panel: question & answer -->
+        <div id="quiz-panel" class="quiz-container">
+            <div class="question-container" id="question">
+            </div>
+            <div class="option-container">
+                <textarea name="text" class="answer-text" placeholder="Enter answer here"></textarea>			
+            </div>
+        </div>
+        <br><br>
+        <!-- 3. Action panel: buttons.. -->
+		<div id="action-panel" class="navigation">
+			<button class="action-button">Start</button>
+		</div>
+        <!-- 1. Thanks panel -->
+        <div style="display: none;" id="thanks"><h2>Thank You!</h2></div>
+	</div>  
+	<script src="script.js"></script>    
+</body>
+</html>

@@ -1,0 +1,135 @@
+<!doctype html>
+<html>
+
+<head>
+  <title>Authenticate</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+      line-height: 1.5;
+      background: rgb(175, 197, 238);
+    }
+
+    .container {
+      display: block;
+      width: 90%;
+      max-width: 800px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .container.main {
+      padding-top: 30px;
+      display: flex;
+      justify-content: center;
+      flex-direction: column;
+    }
+
+    .button,
+    button {
+      border-radius: 3px;
+      background-color: #1579fc;
+      border: none;
+      color: white;
+      font-size: 18px;
+      font-weight: bold;
+      padding: 10px 15px;
+      text-decoration: none;
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/promise-polyfill@7/dist/polyfill.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fetch/2.0.3/fetch.js"></script>
+  <script src="https://unpkg.com/dropbox@10.23.0/dist/Dropbox-sdk.min.js"></script>
+  <script>
+    (function (window) {
+      window.utils = {
+        parseQueryString(str) {
+          const ret = Object.create(null);
+
+          if (typeof str !== 'string') {
+            return ret;
+          }
+
+          str = str.trim().replace(/^(\?|#|&)/, '');
+
+          if (!str) {
+            return ret;
+          }
+
+          str.split('&').forEach((param) => {
+            const parts = param.replace(/\+/g, ' ').split('=');
+            // Firefox (pre 40) decodes `%3D` to `=`
+            // https://github.com/sindresorhus/query-string/pull/37
+            let key = parts.shift();
+            let val = parts.length > 0 ? parts.join('=') : undefined;
+
+            key = decodeURIComponent(key);
+
+            // missing `=` should be `null`:
+            // http://w3.org/TR/2012/WD-url-20120524/#collect-url-parameters
+            val = val === undefined ? null : decodeURIComponent(val);
+
+            if (ret[key] === undefined) {
+              ret[key] = val;
+            } else if (Array.isArray(ret[key])) {
+              ret[key].push(val);
+            } else {
+              ret[key] = [ret[key], val];
+            }
+          });
+
+          return ret;
+        },
+      };
+    }(window));
+  </script>
+</head>
+
+<body>
+
+  <div class="container main">
+    <div>In order to get the test you need to Authenticate yourself, click on below button to authenticate and follow the steps.</div>
+    <br>
+    <div id="pre-auth-section">
+      <a href="" id="authlink" class="button">Authenticate</a>
+    </div>
+  </div>
+
+  <script>
+    var CLIENT_ID = 'oktc8zuysq3csep';
+
+    // Parses the url and gets the access token if it is in the urls hash
+    function getAccessTokenFromUrl() {
+      return utils.parseQueryString(window.location.hash).access_token;
+    }
+
+    // If the user was just redirected from authenticating, the urls hash will
+    // contain the access token.
+    function isAuthenticated() {
+      return !!getAccessTokenFromUrl();
+    }
+
+    // This example keeps both the authenticate and non-authenticated setions
+    // in the DOM and uses this function to show/hide the correct section.
+    function showPageSection(elementId, show = true) {
+      document.getElementById(elementId).style.display = show ? 'block' : 'none';
+    }
+
+    if (isAuthenticated()) {
+      window.localStorage.setItem('token', getAccessTokenFromUrl())
+      console.log('token val in', window.localStorage.getItem('token'))
+      window.location.href = '/test.html'
+    } else {
+      // Set the login anchors href using dbx.getAuthenticationUrl()
+      var dbx = new Dropbox.Dropbox({ clientId: CLIENT_ID });
+      var authUrl = dbx.auth.getAuthenticationUrl('https://piyush-arora.com/')
+        .then((authUrl) => {
+          console.log('url', authUrl)
+          document.getElementById('authlink').href = authUrl;
+        })
+    }
+  </script>
+</body>
+
+</html>
